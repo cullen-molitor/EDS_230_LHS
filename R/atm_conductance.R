@@ -1,13 +1,11 @@
-#' Title
+#' atm_conductance
 #'
 #' @param v numeric - windspeed (cm/s)
 #' @param h numeric - vegetation height (cm)
-#' @param k_0 numeric -
-#' @param k_d numeric -
+#' @param k_0 numeric - coefficient 
+#' @param k_d numeric - coefficient
 #'
 #' @return c_at: atmospheric conductance
-#'
-#' @examples
 #' 
 atm_conductance <- function(v, h, k_0 = 0.1, k_d = 0.7) {
   z_d <- k_d * h
