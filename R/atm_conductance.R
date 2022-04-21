@@ -16,5 +16,5 @@ atm_conductance <- function(v, h, k_0 = 0.1, k_d = 0.7) {
   
   c_at <- v / (6.25 * log(((z_m - z_d)/z_0))^2)
   
-  return(c_at)
+  return(list(c_a = c_at))
 }

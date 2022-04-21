@@ -17,34 +17,6 @@ atm_conductance(v = 250, h = 1000)
 ```
 
 ```{r}
-v_n <- 250
-v_vector <- rnorm(n = v_n, mean = 250, sd = 30)
-
-h_n <- 250
-h_vector <- runif(
-  n = h_n, 
-  min = 950,max = 1050)
-
-k_d_n <- 250
-k_d_vector <- rnorm(n = k_d_n, mean = 0.7, sd = 0.7 * 0.01)
-
-k_0_n <- 250
-k_0_vector <- rnorm(n = k_d_n, mean = 0.1, sd = 0.1 * 0.01)
-```
-
-```{r}
-results <- atm_conductance(
-  v = v_vector,
-  h = h_vector,
-  k_d = k_d_vector,
-  k_0 = k_0_vector
-)
-results_df <- tibble(
-  v_vector, h_vector, k_d_vector, k_0_vector, results
-)
-```
-
-```{r}
 factors <- c("v", "h", "k_d", "k_0")
 smaple_size <- 250
 q <- c("qnorm", "qunif", "qnorm", "qnorm")
@@ -72,7 +44,20 @@ atm_conductances <- pmap(
   .f = atm_conductance, .l =sens_pars
 )
 atm_cond_df <- atm_conductances %>% 
-  map_dfr(.x = `[`)
+  map_dfr(`[`)
+
+sens_atm_cond <- pse::tell(
+  sens_atm_cond, t(as.matrix(atm_cond_df)),
+  res.name = "Atm conductance"
+)
 ```
+```{r}
+pse::plotscatter(sens_atm_cond, col="blue", cex=5)
+```
+
+```{r}
+pse::plotprcc(sens_atm_cond)
+```
+
 
 
