@@ -19,7 +19,10 @@ source(here("R", "atm_conductance.R"))
 atm_conductance(v = 250, h = 1000)
 ```
 
-## 3. Sensitivity Analysis 
+## 3. Sensitivity Analysis
+
+## A. 
+Use LHS to generate parameter values for the 4 parameters
 ```{r}
 factors <- c("v", "h", "k_d", "k_0")
 sample_size <- 250
@@ -43,6 +46,8 @@ sens_atm_cond <- LHS(NULL, factors, sample_size, q, q_arg)
 sens_pars <- get.data(sens_atm_cond)
 ```
 
+## B. 
+Run your atmospheric conductance model for these parameters and return aerodynamic conductances.
 ```{r}
 atm_conductances <- pmap(
   .f = atm_conductance, .l =sens_pars
@@ -78,8 +83,4 @@ cor(atm_cond_df$c_a, sens_pars$k_d, method = "spearman")
 ## F  
 Discuss what your results tell you about how aerodynamic conductance varies with the different parameters? What does it suggest about what you should focus on if you want to reduce uncertainty in aerodynamic conductance estimates? Does this tell you anything about the sensitivity of plant water use to climate change?
 
-According to our analysis, wind speed had the greatest affect on atmospheric conductance and the other variables are much less correlated suggesting they are less important in determining atmospheric conductance. 
-
-To reduce uncertainty in aerodynamic conductance estimates you would focus on accurate wind speed measurements because it is the most correlated with aerodynamic conductance.
-
-Increase in climate change could potentially change wind speed patterns globally. This could have an affect on atmospheric conductance, which is related to plant water use. Greater wind speeds have the potential to increase water use. 
+**According to our analysis, wind speed had the greatest affect on atmospheric conductance and the other variables are much less correlated suggesting they are less important in determining atmospheric conductance. To reduce uncertainty in aerodynamic conductance estimates you would focus on accurate wind speed measurements because it is the most correlated with aerodynamic conductance. Increase in climate change could potentially change wind speed patterns globally. This could have an affect on atmospheric conductance, which is related to plant water use. Greater wind speeds have the potential to increase water use.** 
