@@ -1,5 +1,7 @@
 ---
 title: "Atmospheric Conductance"
+author: "Felicia Cruz, Daniel Kerstan, Cullen Molitor"
+date: "4/25/2022"
 output: html_document
 ---
 
@@ -12,13 +14,15 @@ library(pse)
 source(here("R", "atm_conductance.R"))
 ```
 
+## 2. Run your model 
 ```{r}
 atm_conductance(v = 250, h = 1000)
 ```
 
+## 3. Sensitivity Analysis 
 ```{r}
 factors <- c("v", "h", "k_d", "k_0")
-smaple_size <- 250
+sample_size <- 250
 q <- c("qnorm", "qunif", "qnorm", "qnorm")
 q_arg = list(
   list(
@@ -35,7 +39,7 @@ q_arg = list(
   )
 )
 
-sens_atm_cond <- LHS(NULL, factors, smaple_size, q, q_arg)
+sens_atm_cond <- LHS(NULL, factors, sample_size, q, q_arg)
 sens_pars <- get.data(sens_atm_cond)
 ```
 
@@ -51,6 +55,9 @@ sens_atm_cond <- pse::tell(
   res.name = "Atm conductance"
 )
 ```
+
+## C. 
+Plot conductance estimates in a way that accounts for parameter uncertainty
 ```{r}
 pse::plotscatter(sens_atm_cond, col="blue", cex=5)
 ```
@@ -59,6 +66,8 @@ pse::plotscatter(sens_atm_cond, col="blue", cex=5)
 pse::plotprcc(sens_atm_cond)
 ```
 
+##  E. 
+Estimate the Partial Rank Correlation Coefficients
 ```{r}
 cor(atm_cond_df$c_a, sens_pars$v, method="spearman")
 cor(atm_cond_df$c_a, sens_pars$h, method="spearman")
