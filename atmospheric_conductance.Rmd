@@ -2,7 +2,7 @@
 title: "Atmospheric Conductance"
 author: "Felicia Cruz, Daniel Kerstan, Cullen Molitor"
 date: "4/25/2022"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -16,7 +16,7 @@ source(here("R", "atm_conductance.R"))
 
 ## 2. Run your model 
 ```{r}
-atm_conductance(v = 250, h = 1000)
+atm_conductance(v = 250, h = 1000)$c_a
 ```
 
 ## 3. Sensitivity Analysis
@@ -28,20 +28,11 @@ factors <- c("v", "h", "k_d", "k_0")
 sample_size <- 250
 q <- c("qnorm", "qunif", "qnorm", "qnorm")
 q_arg = list(
-  list(
-    mean = 250, sd = 30
-  ),
-  list(
-    min = 950,max = 1050
-  ),
-  list(
-    mean = 0.7, sd = 0.7 * 0.01
-  ),
-  list(
-    mean = 0.1, sd = 0.1 * 0.01
-  )
+  list(mean = 250, sd = 30),
+  list(min = 950,max = 1050),
+  list(mean = 0.7, sd = 0.7 * 0.01),
+  list(mean = 0.1, sd = 0.1 * 0.01)
 )
-
 sens_atm_cond <- LHS(NULL, factors, sample_size, q, q_arg)
 sens_pars <- get.data(sens_atm_cond)
 ```
@@ -50,11 +41,11 @@ sens_pars <- get.data(sens_atm_cond)
 Run your atmospheric conductance model for these parameters and return aerodynamic conductances.
 ```{r}
 atm_conductances <- pmap(
-  .f = atm_conductance, .l =sens_pars
+  .f = atm_conductance,
+  .l = sens_pars
 )
 atm_cond_df <- atm_conductances %>% 
   map_dfr(`[`)
-
 sens_atm_cond <- pse::tell(
   sens_atm_cond, t(as.matrix(atm_cond_df)),
   res.name = "Atm conductance"
@@ -74,8 +65,8 @@ pse::plotprcc(sens_atm_cond)
 ##  E. 
 Estimate the Partial Rank Correlation Coefficients
 ```{r}
-cor(atm_cond_df$c_a, sens_pars$v, method="spearman")
-cor(atm_cond_df$c_a, sens_pars$h, method="spearman")
+cor(atm_cond_df$c_a, sens_pars$v,   method = "spearman")
+cor(atm_cond_df$c_a, sens_pars$h,   method = "spearman")
 cor(atm_cond_df$c_a, sens_pars$k_0, method = "spearman")
 cor(atm_cond_df$c_a, sens_pars$k_d, method = "spearman")
 ```
